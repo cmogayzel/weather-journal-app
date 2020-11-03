@@ -17,3 +17,4 @@ app.use(express.static('website'));
 
 
 // Setup Server
+const port = 8080;
