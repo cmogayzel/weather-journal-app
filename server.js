@@ -18,13 +18,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Cors for cross origin allowance
+const cors = require('cors');
+app.use(cors());
 
 // Initialize the main project folder
 app.use(express.static('website'));
 
 
 // Setup Server
-const port = 8080;
+const port = 8081;
 
 //start server
 const server = app.listen(port,listening)
@@ -43,12 +45,12 @@ function sendData(req, res) {
 }
 
 //Route POST
-app.post('/weatherData',postData);
+app.post('/addWeatherData', addData)
 
-function postData(req,res) {
-    projectData.temperature = req.body.temperature;
-    projectData.date = req.bod.date;
-    projectData.user_response = req.body.user_response;
-    res.end();
-    console.log(projectData);
+function addData(request, response) {
+    projectData.temperature = request.body.temperature;
+    projectData.date = request.body.date;
+    projectData.user_response = request.body.user_response;
+    response.end();
+    console.log(projectData)
 }

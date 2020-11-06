@@ -1,5 +1,8 @@
 /* Global Variables */
 
+//const { SSL_OP_NO_SSLv2 } = require("constants");
+//const { response } = require("express");
+
 let webSite = 'https://api.openweathermap.org/data/2.5/weather?zip=';
 let apiKey = '80b98a55988855b79cf0d500f4986108';
 
@@ -8,76 +11,62 @@ let d = new Date();
 let newDate = d.getMonth()+'.'+ d.getDate()+'.'+ d.getFullYear();
 
 
-document.getElementById('generate').addEventListener('click',callApi);
+document.getElementById('generate').addEventListener('click',performPost)
 
-function callApi(e) {
-    const postZipCode = document.getElementById('zip').value;
+function performPost(e) {
+    console.log("Hello,Chuck");
+    const postZipcode = document.getElementById('zip').value;
     const myFeelings = document.getElementById('feelings').value;
-    
     console.log(newDate);
-    getLocalTemp(webSite,postZipCode,apiKey)
-    .then(function (userData) {
-        // add data to POST request
-        postData('http://localhost:8080/WeatherData/', {temperature: data.main.temp, date: newDate,userData: myFeelings})
-      }).then(function (newData) {
-        // call updateUI to update browser content
-        updateUI()
-      })
-    // reset form
-    form.reset();
-  }
-  
-  /* Function to GET Web API Data*/
-  const getWeather = async (webSite, postZipCode, apiKey) => {
-    // res equals to the result of fetch function
-    const res = await fetch(webSite + postZipCode + apiKey);
+    
+}
+
+//Aysnc GET with website
+const getTemp = async(webSite, code,apiKey)=>{
+    const webRes = await fetch(baseURL + code + ',us' + '&APPID=' + key)
+    console.log(webRes);
     try {
-      // userData equals to the result of fetch function
-      const userData = await res.json();
-      return userData;
-    } catch (error) {
-      console.log("error", error);
+        const data = await response.json();
+        console.log(data);
+        
+        return data;
     }
-  }
-  
-  /* Function to POST data */
-  const postData = async (url = '', data = {}) => {
-    const req = await fetch(url, {
-      method: "POST",
-      credentials: "same-origin",
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8"
-      },
-      body: JSON.stringify({
-        date: data.date,
-        temp: data.temp,
-        content: data.content
-      })
-    })
-  
+    catch(error) {
+        console.log('error', error);
+    }
+}
+
+//Async to POST
+const postData = async (url = '', data = {}) => {
+    const postRequest = await fetch(url, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
     try {
-      const newData = await req.json();
-      return newData;
+        
+        const newData = await postRequest.json();
+       
+        return newData;
     }
     catch (error) {
-      console.log(error);
+        console.log('POST Error:', error);
     }
-  };
-  
-  
-  const updateUI = async () => {
-    const request = await fetch('/all');
+}
+//refresh the User Interface with new data
+const refreshUI = async () => {
+    const request = await fetch('http://localhost:8080/all');
     try {
-      const allData = await request.json()
-      // show icons on the page
-      icons.forEach(icon => icon.style.opacity = '1');
-      // update new entry values
-      document.getElementById('date').innerHTML = allData.date;
-      document.getElementById('temp').innerHTML = allData.temp;
-      document.getElementById('content').innerHTML = allData.content;
+        const allData = await request.json();
+       // console.log('TRECIAS');
+        document.getElementById('date').innerHTML = allData.date;
+        document.getElementById('temp').innerHTML = allData.temperature;
+        document.getElementById('content').innerHTML = allData.user_response;
     }
     catch (error) {
-      console.log("error", error);
+        console.log('UI Update error:', error);
     }
-  };
-  
+}
