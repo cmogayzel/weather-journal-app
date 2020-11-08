@@ -26,7 +26,7 @@ app.use(express.static('website'));
 
 
 // Setup Server
-const port = 8081;
+const port = 8080;
 
 //start server
 const server = app.listen(port,listening)
